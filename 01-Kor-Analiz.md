@@ -1,151 +1,88 @@
-# FANUC CRX-10iA — Kör Analiz (İlk Taslak)
+# FANUC CRX-10iA - Kör Analiz
 
-**Ders:** YMH459 — Yazılım Mühendisliğinde Güncel Konular  
+**Ders:** YMH459 - Yazılım Mühendisliğinde Güncel Konular  
 **Makine:** FANUC CRX-10iA İşbirlikçi Endüstriyel Robot (Cobot)  
-**Çalışma türü:** Kamuya açık kaynaklarla bağımsız teknik değerlendirme  
-**Tarih:** 23.10.2026  
-**Sürüm:** 0.1 — Ön analiz
+**Çalışma:** Kamuya açık kaynaklarla ön inceleme
 
-> **Kapsam:** Bu rapor, üretici firma veya sektör temsilcilerinden özel bilgi talep edilmeden hazırlanmıştır. Robotun gerçek bir fabrikadaki kurulumu incelenmemiştir. Doğrulanmış bilgiler, tasarım varsayımları ve bilinmeyen ayrıntılar ayrı gösterilir. Bu bir sertifikasyon veya gerçek sisteme yönelik sızma testi değildir.
+## 1. Bu makineyi neden inceliyorum?
 
-## 1. Çalışmanın amacı
+CRX-10iA, üretimde malzeme taşıma, makine besleme ve paketleme gibi işlerde kullanılabilen bir robot kolu. Bu çalışmada robotun temel özelliklerini, nasıl çalıştığını ve iş güvenliği açısından nelere dikkat edilmesi gerektiğini inceliyorum.
 
-FANUC CRX-10iA modelinin çalışma prensibini ve olası endüstriyel kullanımını incelemek; insan emniyetini ilgilendiren tehlikeleri, emniyet fonksiyonlarını, dijital bağımlılıkları ve siber güvenlikle kesişen noktaları ön değerlendirme düzeyinde ortaya koymak.
+**Kör analiz** kapsamında üreticiden özel bilgi istemeden, açık kaynaklardaki bilgileri kullanıyorum. Robotun belirli bir fabrikadaki kurulumunu görmediğim için bazı ayrıntıları kesin olarak bilemiyorum.
 
-Çalışma, laboratuvarlarda ele alınan **Safety Architecture (Emniyet Mimarisi)**, **Safety Function Map (Emniyet Fonksiyon Haritası)**, **Zone / Conduit (Bölge / Kontrollü Geçiş)** ve **Risk Register (Risk Kaydı)** çalışmalarına temel hazırlamak amacıyla düzenlenmiştir.
+## 2. Temel özellikler
 
-## 2. Kaynak ve kanıt yöntemi
+| Özellik | Bilgi |
+|---|---|
+| Üretici | FANUC (Japonya) |
+| Model | CRX-10iA |
+| Robot türü | İşbirlikçi robot (cobot) |
+| Eksen sayısı | 6 |
+| Taşıma kapasitesi | 10 kg |
+| Erişim mesafesi | 1.249 mm |
+| Kontrolör ailesi | R-30iB Plus |
+| Programlama | Dokunmatik arayüzde sürükle-bırak |
 
-Bu dosyadaki ifadeler şu üç gruba ayrılır:
+Bu bilgiler üreticinin ürün tanıtımına dayanmaktadır. CRX-10iA ile **CRX-10iA/L** farklı modellerdir; burada CRX-10iA'yı ele alıyorum.
 
-- **[D] Doğrulanmış:** Kamuya açık üretici sayfasında veya erişilebilir teknik kaynaklarda doğrudan belirtiliyor.
-- **[V] Varsayım:** Bir uygulama senaryosu kurmak veya olası riskleri tartışmak için yapılan mühendislik çıkarımı.
-- **[B] Bilinmiyor:** Kamuya açık kaynaklarla, seçilen makinenin belirli bir kurulumunda doğrulanmamış ayrıntı.
+## 3. Nasıl çalışabilir? Örnek senaryo
 
-**Yöntem kuralı:** [V] veya [B] bilgileri FANUC'un gerçek ürün açığı, kurulumu ya da zayıflığı gibi sunulmaz.
+Analizi somutlaştırmak için robotun bir **paketleme hattında kutuları taşıdığını varsayıyorum**:
 
-## 3. Makinenin genel tanıtımı
+1. Konveyör, kutuyu robotun alabileceği noktaya getirir.
+2. Robot kolu, uygun bir tutucuyla kutuyu kavrar.
+3. Programlanan hareketi yaparak kutuyu palete bırakır.
+4. Uygun ve güvenli koşullarda aynı işlem tekrarlanır.
 
-FANUC CRX-10iA, insanlarla ortak çalışma alanında kullanılmaya yönelik tasarlanmış, altı eksenli bir endüstriyel robot koludur. Üreticinin açıklamalarına göre dokunmatik kumanda arayüzünde sürükle-bırak programlama ve hassas temas algılama özelliklerine sahiptir.
+**Bu bir örnektir.** Konveyörün, tutucunun ve ürün sensörünün gerçek bir CRX-10iA kurulumunda hangi modelde kullanıldığını bilmiyorum. Robotun kendisi ile fabrikaya sonradan eklenen ekipmanları birbirinden ayırıyorum.
 
-| Özellik | Bilgi | Durum |
-|---|---|---|
-| Üretici | FANUC | [D] |
-| Model | CRX-10iA | [D] |
-| Tür | İşbirlikçi endüstriyel robot (cobot) | [D] |
-| Eksen sayısı | 6 | [D] |
-| Azami taşıma kapasitesi | 10 kg | [D] |
-| Erişim mesafesi | 1.249 mm | [D] |
-| Kontrolör ailesi | R-30iB Plus | [D] |
-| Programlama | Dokunmatik arayüzle sürükle-bırak | [D] |
-| Temas algılama | Üreticinin belirttiği hassas temas algılama | [D] |
-| İnternete açık uzaktan bakım portu | Bilgi doğrulanmadı | [B] |
-| Kurulu bir Safety PLC'nin marka/modeli | Bilgi doğrulanmadı | [B] |
-| Kullanılan yazılım/firmware sürümü | Belirli bir cihaz için bilinmiyor | [B] |
+## 4. İlk emniyet değerlendirmesi
 
-**Not:** CRX-10iA ile erişim mesafesi farklı olan **CRX-10iA/L** modeli karıştırılmamalıdır.
+İşbirlikçi robotlar insanlarla yakın çalışabilse de her kullanım kendiliğinden güvenli sayılmaz. Çalışma alanına ve taşınan yüke göre ayrıca değerlendirme yapmak gerekir.
 
-## 4. Örnek kullanım senaryosu — varsayımsal
+| Olası tehlike | Neye dikkat edilmeli? |
+|---|---|
+| Robot kolunun çalışana çarpması | Güvenli hareket ve duruş koşulları |
+| Kol ile sabit yüzey arasında sıkışma | Çalışma alanının ve korumaların değerlendirilmesi |
+| Kutunun tutucudan düşmesi | Yükün güvenli kavranması |
+| Beklenmeyen yeniden başlama | Yeniden başlatma koşullarının kontrol edilmesi |
 
-**[V] Senaryo:** Robot bir paketleme hattında, banttan gelen ve uygun şekilde kavranabilen paketleri alarak belirlenmiş bir palet konumuna yerleştiriyor. Robotun görevi şişeleri doldurmak değil, paketlenmiş ürünleri taşımak.
+Üretici robotta **temas algılama** özelliği bulunduğunu belirtiyor. Ancak bunun tek başına bütün bir paketleme hattının güvenli olduğunu gösterdiğini söyleyemem.
 
-Örnek işlem sırası:
+## 5. Yazılım ve siber güvenlik açısından ilk sorularım
 
-1. Hat, taşıma noktasına bir paket getirir.
-2. Ürün varlığı, kurulumda uygun bir algılama sistemi varsa denetlenir.
-3. Robot kontrolörü önceden tanımlanmış hareket programını yürütür.
-4. Uç efektör/tutucu paketi kavrar ve palet üzerine bırakır.
-5. Döngü güvenli çalışma koşulları sağlanıyorsa tekrarlanır.
+Robotun hareketleri kontrolör ve görev programlarıyla yönetiliyor. Bu yüzden şu konuların incelenmesi gerektiğini düşünüyorum:
 
-Bu senaryonun tutucu modeli, sensör tipi, konveyör protokolü ve üretim hızı **bilinmemektedir**. Bunlar gerçek FANUC CRX-10iA kurulumuna ait tespitler değildir.
+- Robot programlarını ve ayarlarını kim değiştirebiliyor?
+- Operatör ile bakım personelinin yetkileri farklı mı?
+- Fabrika ağına veya uzaktan bakım sistemine bağlantı var mı?
+- Yetkisiz bir değişiklik yapılırsa emniyet fonksiyonları bundan etkilenebilir mi?
 
-## 5. Olası sistem bileşenleri ve bilgi düzeyi
+Bunlar **inceleme sorularıdır**. CRX-10iA'da açık bir internet portu, zayıf parola veya doğrulanmış bir güvenlik açığı bulunduğunu iddia etmiyorum. Böyle bir sonuca varmak için gerçek kurulum ve teknik kanıt gerekir.
 
-| Bileşen / unsur | Rolü | Durum |
-|---|---|---|
-| 6 eksenli robot kolu | Fiziksel hareketi gerçekleştirir | [D] |
-| R-30iB Plus kontrolör | Robot hareketlerinin kontrolü ve program çalıştırma | [D] |
-| Tablet tipi programlama arayüzü | Operatörün robot hareketlerini tanımlaması | [D] |
-| Temas algılama özelliği | İşbirlikçi kullanımda temasın algılanmasına yardımcı olur | [D] |
-| Ürünü kavrayan tutucu | Varsayımsal paket taşıma uygulaması | [V] |
-| Konveyör ve ürün algılama sensörü | Varsayımsal hat entegrasyonu | [V] |
-| Harici emniyet tarayıcısı / koruyucu kapı | Risk değerlendirmesine bağlı olası ek koruma | [V] |
-| Uzaktan erişim / bulut bağlantısı | Bu kurulum için kanıt yok | [B] |
-| Bağımsız Safety PLC topolojisi | Bu kurulum için kanıt yok | [B] |
+## 6. Bildiklerim, varsaydıklarım, bilmediklerim
 
-## 6. LAB 1 için ön değerlendirme — Safety Function Map
+| Durum | Örnek |
+|---|---|
+| **Kamuya açık bilgi** | 6 eksen, 10 kg taşıma kapasitesi, dokunmatik programlama |
+| **Benim varsayımım** | Kutuları konveyörden alıp palete yerleştiren bir fabrika hattı |
+| **Henüz bilmiyorum** | Gerçek ağ bağlantıları, yazılım sürümü, harici sensörler ve emniyet kontrolünün ayrıntıları |
 
-Aşağıdaki sekiz başlık, ders föyündeki soruların **CRX-10iA'ya uyarlanmış ilk cevaplarıdır**. Tam bir doğrulama için uygulamanın risk değerlendirmesi ve ayrıntılı emniyet dokümantasyonu gerekir.
+## 7. Sonuç ve devam planı
 
-### 6.1. İnsan hangi tehlikeden zarar görebilir?
+İlk incelememde robotun sadece hareketlerini değil, **çalışanın tehlikeli hareketlerden nasıl korunacağını** da anlamam gerektiğini gördüm. Bu nedenle sonraki çalışmaları şu sırayla ele alıyorum:
 
-Robot kolu ile sabit bir yüzey arasında **sıkışma/ezilme**, hareket sırasında **çarpma** ve taşınan paketin veya tutucunun neden olduğu **düşme/çarpma** riskleri düşünülebilir. Tehlikenin büyüklüğü; hız, yük, tutucu tasarımı, çevre ekipmanı ve operatörün konumuna bağlıdır. **[V]**
+- **LAB 1:** Emniyet mimarisi ve tehlikeli durumlar
+- **LAB 2:** Olası cihazlar, ağ bölgeleri ve bağlantılar
+- **LAB 3:** Tehdit senaryoları ve risk puanlaması
+- **LAB 4:** Güvenli uzaktan erişim gereksinimleri
 
-### 6.2. Safety function (emniyet fonksiyonu) hangisidir?
+Bu dosya başlangıç incelemesidir. Ayrıntılı cevaplar ve varsayımsal teknik çizimler ilgili LAB dosyalarındadır.
 
-Üretici, robotun hassas **temas algılama** özelliğini belirtmektedir. **[D]** Tehlikeli bir durumda hareketin güvenli biçimde durdurulması değerlendirmemizin merkezindeki emniyet hedefidir. Bunun yanında acil durdurma veya ilave alan korumasının seçilen kurulumda nasıl uygulandığı ayrıca doğrulanmalıdır. **[B]**
+## Kaynaklar
 
-### 6.3. Safety-related control system nerede?
+- [FANUC - CRX-10iA ürün sayfası](https://www.fanuc.eu/tr-tr/urun/robot/crx-10ia)
+- [FANUC America - CRX-10iA](https://www.fanucamerica.com/products/robots/series/collaborative-robot/crx-10ia)
+- Ders materyalleri: *Sunum.pdf* ve *2.1. lab_foyleri_genel.pdf*
 
-Robotun güvenlikle ilişkili kontrol fonksiyonları ve ilgili donanımının kesin mimarisini yalnızca ürün tanıtımından çıkaramıyoruz. **[B]** Bu nedenle dersteki örnek şemada görülen **ayrı Safety PLC** yapısının CRX-10iA'nın içinde veya yanında mutlaka bulunduğu varsayılmıyor.
-
-**Kavramsal akış (gerçek bağlantı şeması değildir):**
-
-- Normal kontrol: Operatör programı → Robot kontrolörü → Robot hareketi / tutucu.
-- Emniyet hedefi: Tehlikeli durumun algılanması → Emniyetle ilgili kontrol fonksiyonu → Tehlikeli hareketin güvenli biçimde durdurulması.
-
-### 6.4. Normal kontrol ile emniyet kontrolü arasındaki fark nedir?
-
-**Normal kontrol**, üretimin planlanan sıra ve hareketlerle devam etmesini sağlar. **Emniyet kontrolü**, anormal/tehlikeli koşullarda insanı korumaya yöneliktir. Emniyet fonksiyonunun güvenilirliği ve kontrolün normal üretim yazılımından ne kadar bağımsız olduğu ayrıca değerlendirilmelidir.
-
-### 6.5. PLr / SIL neden önemlidir?
-
-PLr (gerekli performans seviyesi) ve SIL (emniyet bütünlük seviyesi), korumanın riskle orantılı güvenilirlik gereksinimini belirlemeye yarar. Yalnızca robot modeli ve taşıma kapasitesine bakarak belirli bir çalışma hücresinin PLr/SIL değeri atanamaz; uygulama temelli risk değerlendirmesi gerekir. **[B]**
-
-### 6.6. Safe state (güvenli durum) nedir?
-
-Bu senaryoda güvenli durum, **insan için tehlike oluşturan robot hareketinin güvenli biçimde durdurulmasıdır**. Yükün tutulması veya düşmemesi gibi hususlar da tutucu ve uygulama tasarımına göre ayrıca değerlendirilmelidir. **[V]**
-
-### 6.7. Emniyet fonksiyonunun hangi dijital bağımlılıkları olabilir?
-
-Kavramsal olarak kontrolör yazılımı, kayıtlı programlar, hareket ve güvenlikle ilgili parametrelerin yönetimi, operatör yetkileri ve varsa harici entegrasyonlar değerlendirilir. **[V]** Ancak bunların hangilerinin emniyet fonksiyonuna etki edebildiği ve gerçek cihazın yazılım sürümleri **bilinmiyor**. **[B]**
-
-### 6.8. Siber müdahale emniyeti hangi noktadan bozabilir?
-
-**Koşullu senaryo:** Bir kurulumda yetkisiz kişinin hareket veya güvenlikle ilgili parametrelere erişebildiği varsayılırsa, tehlikeli hareket koşulları oluşabilir. Robotun başka bir sisteme bağlandığı durumda o bağlantı da değerlendirme kapsamına alınır. **[V]**
-
-**Önemli:** Bu, CRX-10iA üzerinde keşfedilmiş bir güvenlik açığı veya FANUC'un internete açık bir portu olduğu iddiası değildir. Gerçek saldırı yüzeyi, erişim topolojisi ve yetki mekanizmaları henüz **doğrulanmamıştır**. **[B]**
-
-## 7. Ön risk listesi — puanlama öncesi
-
-Henüz LAB 2 varlık/envanter çalışması yapılmadığından aşağıdaki riskler için **L × S × E puanı verilmemiştir**.
-
-| Risk adayı | Olası fiziksel sonuç | Açıklama |
-|---|---|---|
-| Robot ve sabit yüzey arasında sıkışma | Ezilme yaralanması | [V] Kurulum yerleşimine bağlı |
-| Robotun taşıdığı paketin düşmesi | Çarpma/yaralanma | [V] Tutucu tasarımına ve yüke bağlı |
-| Yetkisiz hareket parametresi değişikliği | Beklenmeyen hareket nedeniyle yaralanma | [V] Ancak ilgili erişimin mümkün olduğu doğrulanmadı |
-| Hatalı yeniden başlatma düzeni | Operatör yakınındayken tehlikeli hareket | [V] Entegrasyon tasarımına bağlı |
-
-## 8. Açık sorular ve sonraki doğrulamalar
-
-- [ ] Kullanılacak uygulama (paketleme, makine besleme vb.) kesinleştirilecek.
-- [ ] Üreticinin kamuya açık emniyet/kullanım dokümanları incelenecek.
-- [ ] Acil durdurma, temas algılama ve harici koruma seçenekleri kaynaklarla ayrıştırılacak.
-- [ ] Harici ağ, yazılım sürümü ve kullanıcı rolleri hakkında yalnızca doğrulanabilen bilgiler envantere yazılacak.
-- [ ] LAB 2'de varsayımsal bir **Zone / Conduit** mimarisi çizilecek; gerçek kurulum olduğu iddia edilmeyecek.
-- [ ] LAB 3'te en az üç tehdit senaryosu, dayandığı giriş noktasıyla birlikte yazılacak ve puanlanacak.
-
-## 9. Sonuç
-
-İlk kör analiz, CRX-10iA'nın robot hareketi ve işbirlikçi kullanımı nedeniyle **işlevsel emniyet** bakımından incelenmeye uygun bir makine olduğunu göstermektedir. Kamuya açık ürün bilgileri temel özellikleri ortaya koyarken, belirli bir fabrikanın ağ topolojisini, kullanılan kontrol yazılımı sürümünü ve emniyet sistemi ayrıntılarını **kanıtlamamaktadır**. Bu eksikler ayrıca kaydedilmeli; varsayımsal tehditler gerçek güvenlik açığı gibi sunulmamalıdır.
-
-## 10. Açık kaynaklar
-
-1. [FANUC Türkiye — CRX-10iA ürün sayfası](https://www.fanuc.eu/tr-tr/urun/robot/crx-10ia) — Model, 6 eksen, 10 kg, 1249 mm, kontrolör, kullanım ve temas algılama bilgileri.
-2. [FANUC America — CRX-10iA](https://www.fanucamerica.com/products/robots/series/collaborative-robot/crx-10ia) — Uygulama alanları ve teknik özelliklerin ikinci üretici kaynağı.
-3. Ders kapsamında sağlanan *Safety 4.0 Bootcamp* sunumu ve *Genel Laboratuvar Föyleri* — LAB 1 soru yapısı ve sonraki analiz çıktıları için başvuru materyali (dosyaların kendisi bu depoda paylaşılmamıştır).
-
----
-
-*Bu doküman yaşayan bir akademik çalışma dosyasıdır. Sonraki sürümlerde doğrulanan bilgiler, yeni kaynaklar ve laboratuvar çıktıları eklenecektir.*
+> Bu metin eğitim amaçlı ön değerlendirmedir; gerçek bir fabrika incelemesi veya sertifikasyon raporu değildir.

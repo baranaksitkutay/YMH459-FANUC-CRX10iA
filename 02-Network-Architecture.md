@@ -1,39 +1,77 @@
 # 02 — Network Architecture (Ağ Mimarisi)
 
 **Makine:** FANUC CRX-10iA  
-**Senaryo:** Kutuları konveyörden alıp palete yerleştiren robot hücresi.  
-**Durum:** Kör analiz / varsayımsal ağ tasarımı.
+**Senaryo:** Konveyörden kutuları alıp palete yerleştiren varsayımsal robot hücresi.  
+**Çalışma türü:** Kör analiz. Bu çizim gerçek bir FANUC tesisine ait değildir.
 
 ## Amaç
 
-Bu bölümde, **01 – Asset Inventory** dosyasındaki cihazların birbiriyle nasıl haberleşebileceğini gösteriyorum. Aşağıdaki çizim FANUC'un gerçek fabrika ağı değildir; ders için oluşturulmuş örnek bir mimaridir.
+Bu bölümde hücrenin **normal üretim haberleşmesini**, **ofis ağıyla olan sınırını**, **uzaktan bakım yolunu** ve **emniyet bağlantılarını** birlikte ele aldım. Kullanılan A01–A11 kodları `01-Asset-Inventory` dosyasındaki varlıklardır.
 
-## Örnek ağ şeması
+## Örnek ağ ve kontrol şeması
 
 ```mermaid
-flowchart TD
-    U["Dış bakım personeli"] -->|"VPN + MFA (varsayım)"| D["Z2: DMZ / bakım geçidi"]
-    O["Z1: Ofis ağı"] -.->|"Doğrudan robot erişimi yok"| D
-    D -->|"Onaylı ve süreli bakım"| P["Z3: Üretim ağı / HMI / PLC / bakım PC"]
-    S["Konveyör ve ürün sensörü"] --> P
-    P -->|"İzinli üretim komutları"| R["Z4: Robot kontrolörü"]
-    R --> K["CRX-10iA robot kolu"]
-    E["Z5: Emniyet işlevleri"] -.->|"Emniyet bağlantısı; sıradan IP trafiği değil"| R
+flowchart TB
+    O["Z1: Ofis ağı (ERP / e-posta)"] -->|"Yalnız izin verilen trafik"| F["Güvenlik duvarı (A11)"]
+    U["Yetkili uzak bakım personeli"] -->|"VPN + MFA"| D["Z2: DMZ / bakım geçidi (A11)"]
+    F -.->|"Ağ sınırı"| D
+
+    subgraph PROD["Z3: Üretim ağı — günlük çalışma"]
+        S["Ürün sensörü (A06)"] -.->|"Kutu algılama sinyali"| P["Üretim PLC'si (A07)"]
+        H["Operatör paneli / HMI (A08)"] <-->|"Durum bilgisi / komut"| P
+        P -.->|"Konveyör kumandası"| C["Konveyör (A05)"]
+        M["Bakım bilgisayarı (A10)"]
+    end
+
+    subgraph ROBOT["Z4: Robot kontrolü"]
+        R["Robot kontrolörü (A02)"] -.->|"Hareket ve tutucu kumandası"| A["CRX-10iA + tutucu (A01 / A04)"]
+        T["Programlama paneli (A03)"] -.->|"Yerel programlama"| R
+    end
+
+    P <-->|"Hazır / başlat / tamamlandı"| R
+    D -->|"İzinli, süreli ve kayıtlı bakım"| M
+    M -.->|"Yetkili servis bağlantısı"| R
+
+    subgraph SAFE["Z5: Emniyet işlevleri"]
+        E["Acil durdurma ve koruyucu cihazlar (A09)"]
+    end
+    E -.->|"Emniyet bağlantısı"| R
 ```
 
-## Temel bağlantılar
+**Şemayı okuma:** Robotun çalışması için **VPN veya DMZ gerekmez**; bunlar sadece izin verilen bakım bağlantısında kullanılır. Kesikli çizgiler saha sinyalini, kontrol veya emniyet bağlantısını da temsil edebilir. **Şemadaki her ok Ethernet/IP ağı değildir.** Z1–Z5 adları daha sonra `05-Zone-Conduit` bölümünde ayrıntılandırılacak mantıksal bölgelerdir.
 
-| Kaynak → Hedef | Amaç | Önerilen sınır |
+## 1. Normal üretim nasıl işler?
+
+1. Konveyör kutuyu robotun alma noktasına taşır; ürün sensörü kutunun geldiğini PLC'ye bildirir.
+2. Üretim PLC'si, robot kontrolörüyle **hazır / başlat / tamamlandı** gibi temel durum ve komut bilgilerini paylaşır.
+3. Robot kontrolörü, robot kolunu ve tutucuyu yöneterek kutuyu palete yerleştirir.
+4. Operatör HMI üzerinden çalışmayı izler; izin verilen başlatma, durdurma ve durum görüntüleme işlemlerini yapar.
+
+Bu akışta PLC ile robot kontrolörü arasındaki **haberleşme arayüzü varsayılmıştır**; kullanılan gerçek protokol bilinmemektedir. Robot kolunun kontrolöre bağlı olması, kolun ayrı bir ofis ağı cihazı olduğu anlamına gelmez.
+
+## 2. Ofis ağı ve bakım bağlantısı
+
+Ofis ağı (Z1), üretim kontrolünden ayrılmalıdır. İnternet veya ofis bilgisayarından robot kontrolörüne doğrudan erişim öngörmüyoruz. Yetkili servis gerektiğinde **VPN + MFA → DMZ / jump server → bakım bilgisayarı → robot kontrolörü** yolunu kullanabilir. Erişim süreli ve kayıtlı olmalıdır; bağlantı sürekli açık tutulmamalıdır. Bu **önerilen tasarımdır**, mevcut FANUC kurulumu hakkında doğrulanmış bilgi değildir.
+
+## 3. Emniyet bağlantısı
+
+Acil durdurma veya koruyucu cihaz devreye girdiğinde tehlikeli robot hareketinin güvenli şekilde durması hedeflenir. Bu yol, normal üretim komutlarından ve uzaktan bakım oturumundan bağımsız korunmalıdır. **Ayrı bir Safety PLC bulunduğu varsayılmamıştır**; emniyetin robot kontrolöründeki güvenli işlevlerle mi yoksa ek donanımla mı sağlandığı gerçek kurulum için bilinmiyor.
+
+## Bağlantı özeti
+
+| Kaynak → Hedef | Haberleşme / görev | Bağlantı türü |
 |---|---|---|
-| Konveyör / sensör → Üretim PLC'si (A05–A07) | Kutu geldiğinde üretim sırasını başlatmak | Yalnız gerekli sinyaller |
-| Üretim PLC'si / HMI → Robot kontrolörü (A07–A08 → A02) | Robotun çalışma sırasını yönetmek | Yetkili komutlar |
-| Bakım personeli → DMZ → Bakım PC (A10–A11) | Gerektiğinde uzaktan bakım yapmak | VPN, MFA, süreli izin ve kayıt |
-| Emniyet işlevleri (A09) → Robot kontrolü | Tehlikeli hareketi güvenli biçimde durdurmak | Normal ağ komutlarından bağımsız koruma |
+| Ürün sensörü → PLC | Kutunun algılandığını bildirir. | Saha sinyali (varsayım) |
+| HMI ↔ PLC | Operatör komutu ve üretim durumu. | Üretim haberleşmesi |
+| PLC ↔ Robot kontrolörü | Hazır / başlat / tamamlandı bilgisi. | Üretim haberleşmesi (protokol bilinmiyor) |
+| Robot kontrolörü → robot kolu / tutucu | Fiziksel hareketi yönetir. | Robot kontrol bağlantısı |
+| Servis → VPN/DMZ → bakım PC → kontrolör | Yetkili, süreli uzaktan bakım. | Bakım erişimi (önerilen) |
+| Koruyucu cihazlar → emniyet kontrol işlevi | Güvenli duruşu tetikler. | Emniyet bağlantısı (ayrıntı bilinmiyor) |
 
 ## Kısa değerlendirme
 
-Ofis ağı, üretim ağı ve robot kontrolü aynı erişim yetkilerine sahip olmamalıdır. Bakım bağlantısı sürekli açık tutulmamalı; emniyet işlevleri de sıradan ağ trafiğine bağımlı olmamalıdır.
+Günlük üretimdeki PLC–HMI–robot haberleşmesi bakım ağından ayrılmalıdır. Ofis ağından kontrolöre doğrudan erişim olmamalı ve emniyet durdurması sıradan ağ komutlarına bağımlı kalmamalıdır. Gerçek IP adresleri, portlar, saha protokolleri ve kurulu ağ cihazları **bilinmiyor**; bunlar tespit edilmiş bulgu olarak sunulmuyor.
 
-**Bilinen sınırlar:** Gerçek IP adresleri, ağ protokolleri, VLAN yapısı ve uzaktan erişim kullanılıp kullanılmadığı bilinmiyor. Ayrıntılı bölge/geçiş kuralları **05 – Zone & Conduit**, uzaktan erişim kararları **06 – Remote Access Procedure** başlığında ele alınacaktır.
+**Devamı:** Ağ geçişlerinin güvenlik kuralları `05-Zone-Conduit`; bakım oturumunun ayrıntıları `06-Remote-Access-Procedure`; emniyet fonksiyonları `03-Safety-Functions` başlığında incelenecektir.
 
-**Dayanak:** Dersin *Sunum.pdf* ve *2.1. lab_foyleri_genel.pdf* LAB 2 bölümleri; bu projedeki *01 – Asset Inventory* ve *LAB 2* taslakları.
+**Ders dayanağı:** `Sunum.pdf` ve `2.1. lab_foyleri_genel.pdf` içindeki LAB 1–2 başlıkları.

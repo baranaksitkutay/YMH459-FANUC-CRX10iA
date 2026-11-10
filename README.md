@@ -14,7 +14,7 @@ Bu projenin amacı, FANUC tarafından geliştirilen CRX-10iA işbirlikçi endüs
 
 Çalışma, üretici firmayla doğrudan iletişime geçilmeden, kamuya açık teknik dokümanlar ve mühendislik değerlendirmeleri kullanılarak **kör analiz (Blind Analysis)** yöntemiyle yürütülmektedir.
 
-Ayrıca ders kapsamında, robotun kullanıldığı varsayımsal bir üretim hücresi için **15 başlıklı siber emniyet kanıt dosyası (Evidence Pack)** hazırlanmaktadır.
+Ayrıca ders kapsamında, robotun kullanıldığı varsayımsal bir üretim hücresi için **15 başlıklı siber emniyet kanıt dosyası (Evidence Pack)** kapsamında analiz taslakları hazırlanmıştır.
 
 ## 2. Makinenin Genel Tanıtımı
 
@@ -59,7 +59,7 @@ Analizlerde robotun, bir konveyörden gelen kutuları tutucu yardımıyla alıp 
 
 ## 4. Çalışma Kapsamı
 
-Siber emniyet dosyası, ders kapsamında belirtilen **15 Evidence Pack başlığına** göre düzenlenmektedir. Aşağıdaki bağlantılar şu ana kadar hazırlanan taslak analizlere yönlendirmektedir.
+Siber emniyet dosyası, ders kapsamında belirtilen **15 Evidence Pack başlığına** göre düzenlenmektedir. Aşağıdaki bağlantılar hazırlanan 15 akademik analiz taslağına yönlendirmektedir.
 
 | No | Evidence Pack Başlığı | Dosya / Durum |
 |---|---|---|
@@ -70,16 +70,16 @@ Siber emniyet dosyası, ders kapsamında belirtilen **15 Evidence Pack başlığ
 | 05 | Zone & Conduit (Güvenlik Bölgeleri ve Geçişler) | [Taslak analiz](05-Zone-Conduit.md) |
 | 06 | Remote Access Procedure (Uzaktan Erişim Prosedürü) | [Taslak analiz](06-Remote-Access-Procedure.md) |
 | 07 | User/Role Matrix (Kullanıcı ve Yetki Matrisi) | [Taslak analiz](07-User-Role-Matrix.md) |
-| 08 | Software/Firmware Inventory (Yazılım ve Firmware Envanteri) | LAB 5 sonrası hazırlanacak |
-| 09 | SBOM (Yazılım Bileşen Listesi) | LAB 5 sonrası hazırlanacak |
-| 10 | Vulnerability Records (Zafiyet Kayıtları) | LAB 5 sonrası hazırlanacak |
-| 11 | Patch/Update Records (Yama ve Güncelleme Kayıtları) | LAB 5 sonrası hazırlanacak |
-| 12 | Backup & Restore (Yedekleme ve Geri Yükleme) | Planlanıyor |
-| 13 | Incident Response (Olay Müdahalesi) | Planlanıyor |
-| 14 | Change Management (Değişiklik Yönetimi) | Planlanıyor |
-| 15 | Verification/Test (Doğrulama ve Test) | Planlanıyor |
+| 08 | Software/Firmware Inventory (Yazılım ve Firmware Envanteri) | [Taslak analiz](08-Software-Firmware-Inventory.md) |
+| 09 | SBOM (Yazılım Bileşen Listesi) | [Taslak analiz](09-SBOM.md) |
+| 10 | Vulnerability Records (Zafiyet Kayıtları) | [Taslak analiz](10-Vulnerability-Records.md) |
+| 11 | Patch/Update Records (Yama ve Güncelleme Kayıtları) | [Taslak analiz](11-Patch-Update-Records.md) |
+| 12 | Backup & Restore (Yedekleme ve Geri Yükleme) | [Taslak analiz](12-Backup-Restore.md) |
+| 13 | Incident Response (Olay Müdahalesi) | [Taslak analiz](13-Incident-Response.md) |
+| 14 | Change Management (Değişiklik Yönetimi) | [Taslak analiz](14-Change-Management.md) |
+| 15 | Verification/Test (Doğrulama ve Test) | [Taslak analiz](15-Verification-Test.md) |
 
-**Not:** Hazırlanan ilk yedi dosya, varsayımsal sisteme ait analiz taslaklarıdır. Gerçek bir tesiste uygulanmış veya bağımsız olarak doğrulanmış güvenlik önlemlerini ifade etmez.
+**Not:** Hazırlanan 15 dosya, varsayımsal sisteme ait akademik analiz taslaklarıdır. Gerçek cihazdan alınmış SBOM, yama veya test kayıtları değildir; gerçek bir tesiste uygulandıkları ya da bağımsız olarak doğrulandıkları iddia edilmez.
 
 ## 5. Haftalık Çalışmalar
 
@@ -92,7 +92,7 @@ Ders kapsamında gerçekleştirilen laboratuvar uygulamaları, analiz raporları
 - [LAB 3 – Threat & Risk Analysis](LAB-Calismalari/LAB3-Threat-Risk-Analysis.md)
 - [LAB 4 – Secure Remote Access](LAB-Calismalari/LAB4-Secure-Remote-Access.md)
 
-Laboratuvar dosyalarıyla Evidence Pack başlıkları birbirini desteklese de ayrı çalışmalar olarak saklanmaktadır. **LAB 5 kapsamındaki yazılım, zafiyet ve güncelleme başlıkları**, ders anlatımı tamamlandıktan sonra ele alınacaktır.
+Laboratuvar dosyalarıyla Evidence Pack başlıkları birbirini desteklese de ayrı çalışmalar olarak saklanmaktadır. **LAB 5 tamamlanmış ve teslim edilmiştir.** LAB 5 konularıyla ilgili 08–11 numaralı Evidence Pack dosyaları örnek akademik kayıtlar içerir; gerçek yazılım sürümleri veya güvenlik açıkları doğrulanmış değildir.
 
 ## 6. Kaynaklar
 
